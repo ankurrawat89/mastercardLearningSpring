@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+http://www.springframework.org/schema/context
+http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+<!--Specific Collection Injection  -->
+<bean id="sci" class="collectionInjection.DefaultCollectionInjection">
+<property name="fruits">
+<util:list list-class="java.util.ArrayList">
+<value>Apple</value>
+<value>Orange</value>
+</util:list>
+</property>
+<property name="cricketers">
+<util:set set-class="java.util.LinkedHashSet">
+<value>Sachin</value>
+<value>Dravid</value>
+</util:set>
+</property>
+<property name="countryCapital">
+<util:map map-class="java.util.LinkedHashMap">
+<entry key="India" value="Delhi"></entry>
+<entry key="Pakistan" value="Islamabad"></entry>
+</util:map>
+</property>
+</bean>
+
+<!--  Propertiser Injection using schema based configuration-->
+<bean id="spi" class="propertiesInjection.PropertiesInjectionTest">
+<property name="driver">
+<util:properties location="classpath:resources/drivers.properties"></util:properties>
+</property>
+</bean>
+
+<!--p-namespace test  -->
+<!--same could be used for c-namespace as well, just replace p with c in bean creation line  -->
+<bean id="pCar" class="pNameSpace.PNameSpaceTest" p:carName="AUDI" p:engine-ref="engine"/>
+
+<!--Stereotype Annotation Test for automatic bean creation -->
+<context:component-scan base-package="stereotypeAnnotation"></context:component-scan>
+<!--  Properties Injection in Primitives using expression and schema based configuration-->
+ <!-- <bean id="espi" class="propertiesInjection.PropertiesInjectionInPrimitives">
+</bean> -->
+
+
+</beans>

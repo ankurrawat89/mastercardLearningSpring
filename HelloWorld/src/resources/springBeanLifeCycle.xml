@@ -1,0 +1,19 @@
+<!--Use this default dtd  -->
+<!-- <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN"
+"http://www.springframework.org/dtd/spring-beans.dtd"> -->
+<!--Or use this beans-2.0 dtd  -->
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN"
+		  "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans>
+<!--programmatic approach for implementing bean life cycle methods  -->
+<bean id="pblc" class="beanLifeCycle.programmaticApproach.Test">
+<property name="testerName" value="TesterAnkur"></property>
+</bean>
+
+<!--declarative approach for implementing bean life cycle methods    -->
+<bean id="dblc" class="beanLifeCycle.declarativeApproach.Test" init-method="myInit" destroy-method="myDestroy"/>
+
+<!--annotation approach for implementing bean life cycle methods    -->
+<bean class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor"/><!--to activate @PostConstruct and @PreDestroy annotation  -->
+<bean id="ablc" class="beanLifeCycle.annotationApproach.Test"/>
+</beans>

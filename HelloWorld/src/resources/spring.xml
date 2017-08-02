@@ -1,0 +1,271 @@
+<!--Use this default dtd  -->
+<!-- <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN"
+"http://www.springframework.org/dtd/spring-beans.dtd"> -->
+<!--Or use this beans-2.0 dtd  -->
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN"
+		  "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans>
+<!-- in case of default dtd singleton="true" //for scope="singleton" and singleton="false"//for scope="prototype" -->
+<!-- <bean id="t" class="bean.Test" singleton="false"> -->
+<!-- in case of 2.0 dtd use scope attribute -->
+<bean id="t" class="bean.Test" scope="singleton">
+<property name="a" value="10"></property>
+<property name="b"><value>Hello</value></property>
+</bean>
+
+<!--setter injection -->
+<bean id="si" class="setterInjection.TestSetterInjection">
+<property name="gender" value="Mr."></property>
+<property name="email" value="ankur@gmail.com"></property>
+</bean>
+
+<!--constructor injection  -->
+<bean id="ci" class="constructorInjection.TestConstructorInjection">
+<constructor-arg value="Mr."></constructor-arg>
+<constructor-arg value="ankurConstructor@gmail.com"></constructor-arg>
+</bean>
+
+<!--if you not provide the 'type' attribute here then the second constructor argument passed here will go in the email parameter instead of age because in that case spring will treat it as String and inject it into email parameter as it matches it with the constructor having two string parameters  -->
+<bean id="ci1" class="constructorInjection.TestConstructorInjection">
+<constructor-arg value="Mr."></constructor-arg>
+<constructor-arg value="26" type="int"></constructor-arg>
+</bean>
+
+<bean id="ci2" class="constructorInjection.TestConstructorInjection">
+<constructor-arg value="27" type="int"></constructor-arg>
+<constructor-arg value="Mr."></constructor-arg>
+</bean>
+
+<bean id="ci3" class="constructorInjection.TestConstructorInjection">
+<constructor-arg value="28" type="int"></constructor-arg>
+<constructor-arg value="ankurConstructor@gmail.com" index="2"></constructor-arg>
+<constructor-arg value="Mr." index="0"></constructor-arg>
+</bean>
+
+<!--this doesn't work for version 3.1 though it was working for version 2.0.6  -->
+<bean id="ci4" class="constructorInjection.TestConstructorInjection">
+<constructor-arg value="28" type="int"></constructor-arg>
+<constructor-arg value="ankurConstructor@gmail.com" index="2"></constructor-arg>
+<constructor-arg value="Mr." index="0"></constructor-arg>
+<!-- <constructor-arg value="ankurConstructorOverridedValue@gmail.com" index="2"></constructor-arg> -->
+</bean>
+
+<!--secondary Data Injection  -->
+<bean id="engine" class="secondaryDataInjection.Engine">
+<property name="modelYear"><value>2016</value></property>
+</bean>
+
+<bean id="car" class="secondaryDataInjection.Car">
+<property name="name"><value>BMW</value></property>
+<property name="engine"><ref bean="engine"/></property><!-- or use this <property name="engine" ref="engine" /> -->
+</bean>
+
+<bean id="car1" class="secondaryDataInjection.Car">
+<property name="name"><value>AUDI</value></property>
+<property name="engine"><ref bean="engine"/></property>
+</bean>
+
+<!--primitive Array Injection  -->
+<bean id="pai" class="primitiveArrayInjection.ArrayInjectionTest">
+<property name="names">
+<list>
+<value>ankur</value>
+<value>apoorva</value>
+<value>anubhab</value>
+</list>
+</property>
+</bean>
+
+<!--secondary array injection  -->
+<bean id="sai" class="secondaryArrayInjection.SecArrayInjectonTest">
+<property name="carsInfo">
+<list>
+<ref bean="car"/>
+<ref bean="car1"/>
+</list>
+</property>
+</bean>
+
+<!--Default Collection Injection  -->
+<bean id="dci" class="collectionInjection.DefaultCollectionInjection">
+<property name="fruits">
+<list>
+<value>Apple</value>
+<value>Orange</value>
+</list>
+</property>
+<property name="cricketers">
+<set>
+<value>Sachin</value>
+<value>Dravid</value>
+</set>
+</property>
+<property name="countryCapital">
+<map>
+<entry key="India" value="Delhi"></entry>
+<entry key="Pakistan" value="Islamabad"></entry>
+</map>
+</property>
+</bean>
+
+<!-- Properties Injection DTD based configuration //unable to provide external property file -->
+<bean id="pi" class="propertiesInjection.PropertiesInjectionTest">
+<property name="driver">
+<props>
+<prop key="url">abc.def.ghi</prop>
+<prop key="username">ank</prop>
+<prop key="password">ank123</prop>
+</props>
+</property>
+</bean>
+
+<!-- dependency checking  //valid values ==> none/objects/simple/all/default-->
+<!--using this approach for making setter dependency checking mandatory has a drawback, if we have 5 simple properties to set and out of those only 2 is mandatory than by making dependency-check as "Simple" will force us to provide all the 5 simple properties , so to overcome this drawback @Required annotation came into picture  -->
+<bean id="dc" class="secondaryDataInjection.Car" dependency-check="objects">
+<property name="engine" ref="engine"></property>
+</bean>
+
+<!-- dependency checking using @Required annotation-->
+<!--to activate @Required annotation wed must create object of  RequiredAnnotationBeanPostProcessor -->
+<bean class="org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor"/>
+<bean id="radc" class="dependencyChecking.RequiredAnnotationDependencyCheck">
+<property name="driver" value="abc"></property>
+<property name="url" value="hello"></property>
+</bean>
+
+<!--depends-on test  -->
+<bean id="doa" class="dependsOnTest.A" depends-on="dob"></bean>
+<bean id="dob" class="dependsOnTest.B" depends-on="doc"></bean>
+<bean id="doc" class="dependsOnTest.C"></bean>
+
+<!-- autowiring "byType" Test -->
+<bean id="student" class="autowiring.Student" autowire-candidate="false">
+<property name="studentName" value="Ankur"></property>
+</bean>
+<!-- autowire-candidate is used, so that the provided bean do not participate in autowiring -->
+<bean id="student1" class="autowiring.Student">
+<property name="studentName" value="Apoorva"></property>
+</bean>
+<bean id="batch" class="autowiring.Batch" autowire="byType">
+<property name="batchName" value="Batch2016"></property>
+</bean>
+
+<!-- autowiring "byName" Test -->
+<bean id="section" class="autowiring.Section">
+<property name="sectionName" value="SectionA"></property>
+</bean>
+<!--here bean id is "section1", which does not matches with reference name in "Standard" Class so this object will not be autowired, hence no conflict for autowiring -->
+<bean id="section1" class="autowiring.Section">
+<property name="sectionName" value="SectionB"></property>
+</bean>
+<bean id="standard" class="autowiring.Standard" autowire="byName">
+<property name="standardName" value="12Standard"></property>
+</bean>
+
+<!--autowiring "constructor" Test -->
+<!--v.v imp first it uses "byName" mechanism if no matching bean found then it uses "byType" mechanism  -->
+<bean id="batchConstructor" class="autowiring.BatchConstructor" autowire="constructor">
+<property name="batchName" value="Batch2016Constructor"></property>
+</bean>
+
+<!--autowiring "autodetect" Test  -->
+<!--v.v imp unlike autowiring "constructor" (in case of setter DI)it directly checks for "by type" and does not check for name, thus there will be conflict in case of beans havin same type but different bean id -->
+<!--v.v imp like autowiring "constructor" (in case of constructor DI)it first checks for "by name" and if no matching bean is found then it checks for "byTYpe"-->
+<bean id="batchAutoDetect" class="autowiring.BatchAutoDetect" autowire="autodetect">
+<property name="batchName" value="Batch2016AutoDetect"></property>
+</bean>
+
+<!--Annotation based Autowiring Test // default it uses "byName first if no matching found then uses "byType"  -->
+<!--  @Qualifier annotation to resolve ambiguity-->
+<!--@Autowired can be replaced by @Resource and @Inject which is provided by jdk.  -->
+<!--To activate @Autowired and @Qualifier annotation  -->
+<bean class=" org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/>
+<bean id="bus" class="autowiring.Bus">
+<property name="busName" value="BusAnnotationAutowiring"></property>
+</bean>
+
+<bean id="busEngine1" class="autowiring.BusEngine">
+<property name="busEngineName" value="BusEngineName1"></property>
+</bean>
+
+<bean id="busEngine2" class="autowiring.BusEngine">
+<property name="busEngineName" value="BusEngineName2"></property>
+</bean>
+
+<bean id="address" class="stereotypeAnnotation.Address">
+<property name="address" value="VimanNagar"></property>
+</bean>
+
+<!-- static variable DI Test-->
+<bean id="staticStudent" class="static_DI.Student">
+<property name="age" value="10"></property>
+</bean>
+<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+<property name="staticMethod">
+<value>static_DI.Student.setStudentName</value>
+</property>
+<property name="arguments">
+	<list>
+	<value>AnkurStatic</value>
+	</list>
+</property>
+</bean>
+
+<!--Singelton Bean Creation Test  -->
+<bean id="singeltonRef" class="singeltonBeanCreation.SingeltonTest" factory-method="getInstance" scope="prototype">
+</bean>
+
+<!--Factory Method Bean Creation for static case  -->
+<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+<property name="staticMethod">
+<value>factoryMethodBeanCreation.staticTest.CarFactory.setCarName</value>
+</property>
+<property name="arguments">
+	<list>
+	<value>factoryMethodBeanCreation.staticTest.AudiCar</value>
+	</list>
+</property>
+</bean>
+<bean id="carFactory" class="factoryMethodBeanCreation.staticTest.CarFactory" factory-method="getCar" ></bean>
+
+<!--Factory Method Bean Creation for non-static case  -->
+<bean id="cf" class="factoryMethodBeanCreation.nonStaticTest.CarFactory">
+<property name="carName" value="factoryMethodBeanCreation.nonStaticTest.AmazeCar"></property>
+</bean>
+<bean id="c" factory-bean="cf" factory-method="getCar"></bean>
+
+<!-- car factory creation by using FactoryBean interface -->
+<bean id="carFac" class="factoryCraetionByUsingFactoryBeanInterface.CarFactory">
+<property name="carName" value="factoryCraetionByUsingFactoryBeanInterface.Benz"></property>
+</bean>
+
+
+<!--lookup method dependency injection  -->
+<!--cglib jar need to be added apart from spring jars in order to generate proxy class.  -->
+<!--As Car here is a abstract class so it can not be instantiated so Spring will generate a proxy class which will be extending this abstract Car class and will also provide the implementation for the abstract method present in abstract Car class -->
+<bean id="abstractCar" class="lookupMethodDependencyInjection.Car">
+<lookup-method name="myEngine" bean="abstractCarEngine"/>
+</bean>
+<bean id="abstractCarEngine" class="lookupMethodDependencyInjection.Engine">
+<property name="engineName" value="AX100"></property>
+</bean>
+
+<!--method replacer example to override the existing implementation, in this case also spring will generate a proxy class which will be extending the main class and will also provide the new implementation of a method defined inside method replacer tag.  -->
+<bean id="empInfo" class="methodReplacer.EmployeeInfo">
+<property name="name" value="Ankur"></property>
+<property name="age" value="27"></property>
+<property name="weight" value="68"></property>
+<replaced-method name="printInfo" replacer="finfo"></replaced-method>
+</bean>
+<bean id="finfo" class="methodReplacer.FormattedInfo"></bean>
+
+<!--propertyfile data dependency injection  -->
+<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+<property name="location" value="resources/studentInfo.properties"></property>
+</bean>
+<bean id="studentInfo" class="propertyFileDataDependencyInjection.StudentInfo">
+<property name="name" value="${studentName}"></property>
+<property name="age" value="${studentAge}"></property>
+<property name="rollNo" value="${studentRollNo}"></property>
+</bean>
+</beans>
